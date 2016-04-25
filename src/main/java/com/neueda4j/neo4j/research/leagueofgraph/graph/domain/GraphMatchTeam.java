@@ -51,7 +51,7 @@ public class GraphMatchTeam {
         node.setProperty(KEY_TOWER_KILLS, matchTeam.getTowerKills());
         node.setProperty(KEY_INHIBITOR_KILLS, matchTeam.getInhibitorKills());
 
-        //node.setProperty(, matchTeam.getBans());
+        // todo: bans
 
         return new GraphMatchTeam(node);
     }

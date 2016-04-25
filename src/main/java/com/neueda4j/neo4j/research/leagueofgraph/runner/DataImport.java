@@ -2,13 +2,11 @@ package com.neueda4j.neo4j.research.leagueofgraph.runner;
 
 import com.google.common.collect.Lists;
 import com.neueda4j.neo4j.research.leagueofgraph.GraphDatabase;
-import com.neueda4j.neo4j.research.leagueofgraph.graph.domain.GraphMatch;
 import com.neueda4j.neo4j.research.leagueofgraph.graph.domain.GraphMatchReference;
 import com.neueda4j.neo4j.research.leagueofgraph.graph.domain.GraphSummoner;
 import com.robrua.orianna.api.core.RiotAPI;
 import com.robrua.orianna.type.core.common.QueueType;
 import com.robrua.orianna.type.core.common.Season;
-import com.robrua.orianna.type.core.match.Match;
 import com.robrua.orianna.type.core.matchlist.MatchReference;
 import com.robrua.orianna.type.core.summoner.Summoner;
 import org.slf4j.Logger;
@@ -49,17 +47,18 @@ public class DataImport {
             MatchReference matchReference = matchList.get(i);
             log.info("Importing Summoner[{}] - MatchReference[{}] {}/{}",
                     summoner.getName(), matchReference.getID(), i, matchList.size());
+
             GraphMatchReference graphMatchReference = database.createMatchReference(matchReference);
             if (lastGraphMatchReference != null) {
                 graphMatchReference.addNextGraphMatchReference(lastGraphMatchReference);
             }
             lastGraphMatchReference = graphMatchReference;
             graphSummoner.addGraphMatchReference(graphMatchReference);
+        }
 
-            // Import Match
-            Match match = safelyExecute(() -> matchReference.getMatch(false));
-            GraphMatch graphMatch = database.createMatch(match);
-            graphMatchReference.setGraphMatch(graphMatch);
+
+        if (lastGraphMatchReference != null) {
+            graphSummoner.setLastMatchReference(lastGraphMatchReference);
         }
     }
 

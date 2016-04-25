@@ -17,7 +17,11 @@ import org.neo4j.graphdb.Node;
 public class GraphSummoner {
 
     public static final String KEY_ID = "id";
-    public static final String KEY_NAME = "name";
+    private static final String KEY_NAME = "name";
+    private static final String KEY_LEVEL = "level";
+    private static final String KEY_PROFILE_ICON_ID = "profile_icon_id";
+    private static final String KEY_REVISION_DATE = "revision_date";
+    private static final String KEY_REVISION_DATE_TIMESTAMP = "revision_date_timestamp";
 
     private final Node node;
 
@@ -25,6 +29,18 @@ public class GraphSummoner {
         node.addLabel(Labels.Summoner);
         node.setProperty(KEY_ID, summoner.getID());
         node.setProperty(KEY_NAME, summoner.getName());
+        node.setProperty(KEY_LEVEL, summoner.getLevel());
+        node.setProperty(KEY_PROFILE_ICON_ID, summoner.getProfileIconID());
+        node.setProperty(KEY_REVISION_DATE, summoner.getRevisionDate().getTime());
+        node.setProperty(KEY_REVISION_DATE_TIMESTAMP, summoner.getRevisionDate().toString());
+
+        // todo: league entires
+        // todo: leagues
+        // todo: mastery pages
+        // todo: ranked stats
+        // todo: rune pages
+        // todo: stats
+        // todo: teams
 
         return new GraphSummoner(node);
     }
@@ -37,7 +53,11 @@ public class GraphSummoner {
         node.createRelationshipTo(graphMatchReference.getNode(), RelationshipTypes.PLAYED_MATCH_REFERENCE);
     }
 
-    public void participatedWith(GraphParticipant graphParticipant) {
-        node.createRelationshipTo(graphParticipant.getNode(), RelationshipTypes.PLAYED_PARTICIPATED);
+    public void setLastMatchReference(GraphMatchReference lastGraphMatchReference) {
+        node.createRelationshipTo(lastGraphMatchReference.getNode(), RelationshipTypes.LAST_PLAYED_MATCH_REFERENCE);
+    }
+
+    public void participated(GraphParticipant graphParticipant) {
+        node.createRelationshipTo(graphParticipant.getNode(), RelationshipTypes.PARTICIPATED);
     }
 }

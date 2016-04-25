@@ -12,12 +12,21 @@ import org.neo4j.graphdb.Node;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class GraphMatch {
 
     public static final String KEY_ID = "id";
-    public static final String KEY_VERSION = "version";
-    public static final String KEY_DURATION = "duration";
-    public static final String KEY_MODE = "mode";
+    private static final String KEY_VERSION = "version";
+    private static final String KEY_DURATION = "duration";
+    private static final String KEY_MODE = "mode";
+    private static final String KEY_QUEUE_TYPE = "queue_type";
+    private static final String KEY_SEASON = "season";
+    private static final String KEY_CREATION = "creation";
+    private static final String KEY_CREATION_TIMESTAMP = "creation_timestamp";
+    private static final String KEY_GAME_MAP = "map";
+    private static final String KEY_PLATFORM_ID = "platform_id";
+    private static final String KEY_REGION = "region";
+    private static final String KEY_TYPE = "type";
 
     private Node node;
 
@@ -25,8 +34,16 @@ public class GraphMatch {
         node.addLabel(Labels.Match);
         node.setProperty(KEY_ID, match.getID());
         node.setProperty(KEY_VERSION, match.getVersion());
+        node.setProperty(KEY_CREATION, match.getCreation().getTime());
+        node.setProperty(KEY_CREATION_TIMESTAMP, match.getCreation().toString());
         node.setProperty(KEY_DURATION, match.getDuration());
+        node.setProperty(KEY_GAME_MAP, match.getMap().toString());
         node.setProperty(KEY_MODE, match.getMode().toString());
+        node.setProperty(KEY_PLATFORM_ID, match.getPlatformID().toString());
+        node.setProperty(KEY_QUEUE_TYPE, match.getQueueType().toString());
+        node.setProperty(KEY_REGION, match.getRegion().toString());
+        node.setProperty(KEY_SEASON, match.getSeason().toString());
+        node.setProperty(KEY_TYPE, match.getType().toString());
 
         GraphMatch graphMatch = new GraphMatch(node);
 
@@ -45,6 +62,8 @@ public class GraphMatch {
 
             graphParticipant.playedForGraphMatchTeam(graphMatchTeamMap.get(participant.getTeam()));
         }
+
+        // todo: timeline
 
         return graphMatch;
     }
