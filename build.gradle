@@ -1,0 +1,22 @@
+group 'com.neueda4j.neo4j.research'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'idea'
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile 'com.google.guava:guava:19.0'
+    compile 'com.robrua:orianna:2.4.3-SNAPSHOT'
+    compile 'org.neo4j:neo4j:2.3.3'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.slf4j:slf4j-simple:1.7.21'
+    testCompile 'junit:junit:4.11'
+}
