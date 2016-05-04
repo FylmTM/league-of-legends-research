@@ -38,9 +38,9 @@ public class GraphChampion {
         node.setProperty(KEY_PARTY_TYPE, champion.getPartype());
 
         node.setProperty(KEY_BLURB, champion.getBlurb());
-        node.setProperty(KEY_TAGS, champion.getTags());
-        node.setProperty(KEY_ALLY_TIPS, champion.getAllyTips());
-        node.setProperty(KEY_ENEMY_TIPS, champion.getEnemyTips());
+        node.setProperty(KEY_TAGS, champion.getTags().toArray(new String[0]));
+        node.setProperty(KEY_ALLY_TIPS, champion.getAllyTips().toArray(new String[0]));
+        node.setProperty(KEY_ENEMY_TIPS, champion.getEnemyTips().toArray(new String[0]));
 
         node.setProperty(KEY_IMAGE_FULL, champion.getImage().getFull());
         node.setProperty(KEY_IMAGE_GROUP, champion.getImage().getGroup());

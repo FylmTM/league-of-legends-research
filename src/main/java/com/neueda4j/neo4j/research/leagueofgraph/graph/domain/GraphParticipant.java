@@ -4,6 +4,7 @@ import com.neueda4j.neo4j.research.leagueofgraph.GraphDatabase;
 import com.neueda4j.neo4j.research.leagueofgraph.graph.Labels;
 import com.neueda4j.neo4j.research.leagueofgraph.graph.RelationshipTypes;
 import com.robrua.orianna.type.core.match.Participant;
+import com.robrua.orianna.type.core.match.ParticipantTimeline;
 import com.robrua.orianna.type.core.staticdata.Champion;
 import com.robrua.orianna.type.core.summoner.Summoner;
 import org.neo4j.graphdb.Node;
@@ -54,11 +55,14 @@ public class GraphParticipant {
         GraphChampion graphChampion = graphDatabase.createChampion(champion);
         graphParticipant.participatedWithChampion(graphChampion);
 
+        ParticipantTimeline participantTimeline = safelyExecute(participant::getTimeline);
+        GraphParticipantTimeline graphParticipantTimeline = graphDatabase.createParticipantTimeline(participantTimeline);
+        graphParticipant.setParticipantTimeline(graphParticipantTimeline);
+
         // todo: masteries
         // todo: runes
         // todo: stats
         // todo: summoner spell 1 & 2
-        // todo: timeline
 
         return graphParticipant;
     }
@@ -77,6 +81,9 @@ public class GraphParticipant {
 
     public void participatedWithChampion(GraphChampion graphChampion) {
         node.createRelationshipTo(graphChampion.getNode(), RelationshipTypes.PARTICIPATED_WITH_CHAMPION);
+    }
 
+    public void setParticipantTimeline(GraphParticipantTimeline graphParticipantTimeline) {
+        node.createRelationshipTo(graphParticipantTimeline.getNode(), RelationshipTypes.PARTICIPANT_TIMELINE);
     }
 }

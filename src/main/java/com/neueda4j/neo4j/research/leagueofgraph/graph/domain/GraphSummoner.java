@@ -3,7 +3,9 @@ package com.neueda4j.neo4j.research.leagueofgraph.graph.domain;
 import com.neueda4j.neo4j.research.leagueofgraph.graph.Labels;
 import com.neueda4j.neo4j.research.leagueofgraph.graph.RelationshipTypes;
 import com.robrua.orianna.type.core.summoner.Summoner;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 
 /**
  * {"fylmtm": {
@@ -54,10 +56,28 @@ public class GraphSummoner {
     }
 
     public void setLastMatchReference(GraphMatchReference lastGraphMatchReference) {
+        Relationship lastRel = node.getSingleRelationship(RelationshipTypes.LAST_PLAYED_MATCH_REFERENCE, Direction.OUTGOING);
+        if (lastRel != null) {
+            lastRel.delete();
+        }
         node.createRelationshipTo(lastGraphMatchReference.getNode(), RelationshipTypes.LAST_PLAYED_MATCH_REFERENCE);
     }
 
     public void participated(GraphParticipant graphParticipant) {
         node.createRelationshipTo(graphParticipant.getNode(), RelationshipTypes.PARTICIPATED);
+    }
+
+    public GraphMatchReference getLastMatchReference() {
+        Relationship relationship = node.getSingleRelationship(RelationshipTypes.LAST_PLAYED_MATCH_REFERENCE, Direction.OUTGOING);
+
+        if (relationship != null) {
+            return new GraphMatchReference(relationship.getEndNode());
+        } else {
+            return null;
+        }
+    }
+
+    public String getName() {
+        return (String) node.getProperty(KEY_NAME);
     }
 }

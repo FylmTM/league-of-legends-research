@@ -41,37 +41,41 @@ public class DataImport {
 
         List<MatchReference> matchList = getMatchList(summoner);
 
-        GraphMatchReference lastGraphMatchReference = null;
+        GraphMatchReference firstGraphMatchReference = null;
+        GraphMatchReference nextGraphMatchReference = null;
         for (int i = 0; i < matchList.size(); i++) {
-            // Import MatchReference
             MatchReference matchReference = matchList.get(i);
             log.info("Importing Summoner[{}] - MatchReference[{}] {}/{}",
                     summoner.getName(), matchReference.getID(), i, matchList.size());
 
-            GraphMatchReference graphMatchReference = database.createMatchReference(matchReference);
-            if (lastGraphMatchReference != null) {
-                graphMatchReference.addNextGraphMatchReference(lastGraphMatchReference);
+            GraphMatchReference graphMatchReference = database.findMatchReference(graphSummoner, matchReference);
+
+            if (graphMatchReference != null) {
+                if (i == 0) {
+                    firstGraphMatchReference = graphMatchReference;
+                }
+                if (nextGraphMatchReference != null) {
+                    graphMatchReference.addNextGraphMatchReference(nextGraphMatchReference);
+                }
+                break;
             }
-            lastGraphMatchReference = graphMatchReference;
+
+
+            graphMatchReference = database.createMatchReference(graphSummoner, matchReference);
+            if (i == 0) {
+                firstGraphMatchReference = graphMatchReference;
+            }
             graphSummoner.addGraphMatchReference(graphMatchReference);
+            if (nextGraphMatchReference != null) {
+                graphMatchReference.addNextGraphMatchReference(nextGraphMatchReference);
+            }
+            nextGraphMatchReference = graphMatchReference;
         }
 
-
-        if (lastGraphMatchReference != null) {
-            graphSummoner.setLastMatchReference(lastGraphMatchReference);
-        }
+        graphSummoner.setLastMatchReference(firstGraphMatchReference);
     }
 
     private List<MatchReference> getMatchList(Summoner summoner) {
-        //return safelyExecute(() -> summoner.getMatchList(null, null, QUEUE_TYPES, null, SEASONS));
-        return safelyExecute(() -> summoner.getMatchList(15, 0, null, null, QUEUE_TYPES, null, SEASONS));
+        return safelyExecute(() -> summoner.getMatchList(null, null, QUEUE_TYPES, null, SEASONS));
     }
 }
-
-//            Timeline timeline = match.getTimeline();
-//            for (Frame frame : timeline.getFrames()) {
-//                for (Event event : frame.getEvents()) {
-//                    System.out.println(event.getEventType()
-//                            + " :: " + (event.getParticipant() == null ? "-" : event.getParticipant().getSummonerName()));
-//                }
-//            }

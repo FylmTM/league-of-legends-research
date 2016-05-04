@@ -2,8 +2,14 @@ package com.neueda4j.neo4j.research.leagueofgraph.graph.domain;
 
 import com.neueda4j.neo4j.research.leagueofgraph.GraphDatabase;
 import com.neueda4j.neo4j.research.leagueofgraph.graph.Labels;
+import com.neueda4j.neo4j.research.leagueofgraph.graph.RelationshipTypes;
+import com.robrua.orianna.type.core.match.BannedChampion;
 import com.robrua.orianna.type.core.match.MatchTeam;
+import com.robrua.orianna.type.core.staticdata.Champion;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+
+import static com.neueda4j.neo4j.research.leagueofgraph.runner.SafelyRunnable.safelyExecute;
 
 public class GraphMatchTeam {
 
@@ -51,9 +57,21 @@ public class GraphMatchTeam {
         node.setProperty(KEY_TOWER_KILLS, matchTeam.getTowerKills());
         node.setProperty(KEY_INHIBITOR_KILLS, matchTeam.getInhibitorKills());
 
-        // todo: bans
+        GraphMatchTeam graphMatchTeam = new GraphMatchTeam(node);
 
-        return new GraphMatchTeam(node);
+        if (matchTeam.getDto().getBans() != null) {
+            for (BannedChampion bannedChampion : matchTeam.getBans()) {
+                Champion champion = safelyExecute(bannedChampion::getChampion);
+                graphMatchTeam.bannedChampion(bannedChampion, graphDatabase.createChampion(champion));
+            }
+        }
+
+        return graphMatchTeam;
+    }
+
+    public void bannedChampion(BannedChampion bannedChampion, GraphChampion graphChampion) {
+        Relationship rel = node.createRelationshipTo(graphChampion.getNode(), RelationshipTypes.BANNED);
+        rel.setProperty("pick_turn", bannedChampion.getPickTurn());
     }
 
     public Node getNode() {
